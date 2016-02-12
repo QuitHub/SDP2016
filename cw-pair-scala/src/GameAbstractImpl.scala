@@ -13,4 +13,6 @@ abstract class GameAbstractImpl extends Game {
     this()
     showCode = easy
   }
+
+
 }
