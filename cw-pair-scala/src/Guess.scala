@@ -3,12 +3,5 @@
   *
   * @author lukematthews
   */
-class Guess extends Code{
 
 
-  def this(input: String){
-    this()
-    stringToVector(input)
-  }
-
-}
