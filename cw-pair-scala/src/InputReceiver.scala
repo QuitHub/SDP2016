@@ -7,15 +7,9 @@ import scala.io.StdIn
   */
 trait InputReceiver {
   def getInput(): String
-  def validateInput()
 }
 
 object StandardInputReceiver extends InputReceiver {
 
-  override def getInput(): String = {
-    print(EnglishLanguage.getNextGuessString)
-    StdIn.readLine()
-  }
-
-  override def validateInput(): Unit = ???
+  override def getInput = StdIn.readLine().toUpperCase
 }

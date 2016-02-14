@@ -5,6 +5,9 @@
   */
 trait Language {
   def getNextGuessString: String
+  def getWellDoneString: String
+  def getFailString: String
+  def getQuitString: String
 }
 
 object EnglishLanguage extends Language {
@@ -14,4 +17,15 @@ object EnglishLanguage extends Language {
     "Enter guess: "
   }
 
+  override def getWellDoneString: String = {
+    "You solved the puzzle! Good Job!\n"
+  }
+
+  override def getQuitString: String = {
+    "Enter Y for another game or anything else to quit: "
+  }
+
+  override def getFailString: String = {
+    "You did not solve the puzzle too bad."
+  }
 }

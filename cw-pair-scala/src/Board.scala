@@ -3,7 +3,6 @@
   *
   * @author lukematthews
   */
-case class Result(guess: Code, result: String)
 
 case class Board(numberOfGuessesLeft: Int,
                  codeLength: Int,
@@ -12,10 +11,8 @@ case class Board(numberOfGuessesLeft: Int,
                  showCode: Boolean) {
 
   override def toString(): String = {
-    var out = ""
-
-    out += secretCode.toString + " Secret Code \n"
-    results.foreach(r => out += r.guess +" "+ r.result + "\n")
+    var out = secretCodeToString
+    results.foreach(r => out += r.guess +" "+ r.resultStr + "\n")
     for (i <- 1 to numberOfGuessesLeft) { /// put this in holes to string??????
       out += rowToString + "\n"
     }
@@ -30,7 +27,7 @@ case class Board(numberOfGuessesLeft: Int,
     } else {
       out += rowToString
     }
-    out += " Secret code\n"
+    out + " Secret Code \n"
   }
 
   def rowToString = {
@@ -42,4 +39,19 @@ case class Board(numberOfGuessesLeft: Int,
   }
 
   def guessesLeftToString = s"You have $numberOfGuessesLeft guesses left."
+
+  def updateBoard(guess: Guess): Board = {
+    val randomCode = this.secretCode
+    val result = guess.calculateResult(randomCode)
+    var guessesLeft = this.numberOfGuessesLeft - 1
+    if(result.isCorrect){
+      guessesLeft = 0
+    }
+    val codeLength = this.codeLength
+    val results = this.results :+ result
+    val show = this.showCode
+    val b = Board(guessesLeft, codeLength, randomCode, results, show)
+    b
+  }
+
 }

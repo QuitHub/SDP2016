@@ -5,6 +5,7 @@ import scala.util.Random
   *
   * @author lukematthews
   */
+case class Result(guess: Code, resultStr: String, isCorrect: Boolean)
 
 abstract class Code() {
   var vector: Vector[Char] = Vector()
@@ -13,17 +14,15 @@ abstract class Code() {
     s.foreach(c => vector = vector :+ c)
   }
 
-  def calculateResult(other: Code): String = {
+  def calculateResult(other: Code): Result = {
     var output = "Result: "
-    var zippedAndFiltered = filterOutMatched(this.vector, other.vector)
-    var setA = zippedAndFiltered._1.toSet[Char]
-    var setB = zippedAndFiltered._2.toSet[Char]
+    val zippedAndFiltered = filterOutMatched(this.vector, other.vector)
+    val setA = zippedAndFiltered._1.toSet[Char]
+    val setB = zippedAndFiltered._2.toSet[Char]
     output = output + getBlacks(this.vector, other.vector) + getWhites(setA, setB)
-    if (output.equals("Result: ")) {
-      return output + "No Pegs"
-    } else {
-      return output
-    }
+    if (output.equals("Result: ")) { output += output + "No Pegs" }
+    val isCorrect = (this.vector, other.vector).zipped.filter(_ == _)._1.size == 4
+    Result(this, output, isCorrect)
   }
 
   def getBlacks(guess: Vector[Char], other: Vector[Char]): String = {
@@ -49,19 +48,23 @@ abstract class Code() {
   }
 }
 
-class RandomCode extends Code {
+case class RandomCode(length: Int, gameConfigurer: GameConfigurer) extends Code {
 
-  def this(length: Int) {
-    this()
+  {
     stringToVector(generateRandomString(length))
   }
 
   def generateRandomString(length: Int): String = {
     val r = new Random()
+    isValidChar('r')
     r.alphanumeric
-      .filter(c => c.isLetter && c <= 'F' && c.isUpper)
+      .filter(c => c.isLetter && isValidChar(c))
       .slice(0, length)
       .mkString
+  }
+
+  def isValidChar(c: Char): Boolean ={
+    gameConfigurer.getColours.keySet.contains(c)
   }
 }
 

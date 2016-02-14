@@ -13,13 +13,11 @@ class MastermindGame() extends GameAbstractImpl() {
     */
 
   def makeBoard: Board = {
-    val myGuess = new Guess("BBCB")
-    val randomCode = new RandomCode(4)
-    val resultToString = myGuess.calculateResult(randomCode)
-    val res = Result(guess = myGuess, result = resultToString)
-    val guessesleft = 3
+    val gc = StandardGameConfigurer
+    val randomCode = new RandomCode(4, gc)
+    val guessesleft = 2
     val codeLength = 4
-    val results = Vector(res)
+    val results = Vector[Result]()
     val show = true
     val b = Board(guessesleft, codeLength, randomCode, results, show)
     b
@@ -27,10 +25,33 @@ class MastermindGame() extends GameAbstractImpl() {
 
 
   override def runGames: Unit = {
-    print(makeBoard)
-    StandardInputReceiver.getInput()
+    var board = makeBoard
+    print(board)
+    val sir = StandardInputReceiver
+    val sor = StandardOutputRender
+    val siv = StandardInputValidator
+    val lang = EnglishLanguage
+    var theyWon = !(board.results.isEmpty || !board.results.last.isCorrect)
+    while (!theyWon) {
+      var isValidGuess = false
+      var input = ""
+      while (!isValidGuess) {
+        sor.render(lang.getNextGuessString)
+        input = sir.getInput
+        isValidGuess = siv.validateInput(input)
+      }
+      val guess = new Guess(input)
+      board = board.updateBoard(guess)
+      theyWon = board.results.last.isCorrect || board.numberOfGuessesLeft == 0
+      println("they won: " +theyWon)
+      sor.render(board.toString())
+
+    }
+    if(theyWon){
+      sor.render(lang.getWellDoneString)
+    } else {
+      sor.render(lang.getFailString)
+    }
+    sor.render(lang.getQuitString)
   }
-
-
-
 }
