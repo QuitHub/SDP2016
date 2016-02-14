@@ -1,12 +1,5 @@
 import scala.util.Random
 
-/**
-  * 11/02/2016.
-  *
-  * @author lukematthews
-  */
-case class Result(guess: Code, resultStr: String, isCorrect: Boolean)
-
 abstract class Code() {
   var vector: Vector[Char] = Vector()
 
@@ -20,7 +13,9 @@ abstract class Code() {
     val setA = zippedAndFiltered._1.toSet[Char]
     val setB = zippedAndFiltered._2.toSet[Char]
     output = output + getBlacks(this.vector, other.vector) + getWhites(setA, setB)
-    if (output.equals("Result: ")) { output += output + "No Pegs" }
+    if (output.equals("Result: ")) {
+      output += output + "No Pegs"
+    }
     val isCorrect = (this.vector, other.vector).zipped.filter(_ == _)._1.size == 4
     Result(this, output, isCorrect)
   }
@@ -48,6 +43,13 @@ abstract class Code() {
   }
 }
 
+/**
+  * 11/02/2016.
+  *
+  * @author lukematthews
+  */
+case class Result(guess: Code, resultStr: String, isCorrect: Boolean)
+
 case class RandomCode(length: Int, gameConfigurer: GameConfigurer) extends Code {
 
   {
@@ -56,24 +58,18 @@ case class RandomCode(length: Int, gameConfigurer: GameConfigurer) extends Code 
 
   def generateRandomString(length: Int): String = {
     val r = new Random()
-    isValidChar('r')
     r.alphanumeric
       .filter(c => c.isLetter && isValidChar(c))
       .slice(0, length)
       .mkString
   }
 
-  def isValidChar(c: Char): Boolean ={
+  def isValidChar(c: Char): Boolean = {
     gameConfigurer.getColours.keySet.contains(c)
   }
 }
 
-class Guess extends Code {
-
-  def this(input: String) {
-    this()
-    stringToVector(input)
-  }
-
+case class Guess(input: String) extends Code {
+  stringToVector(input)
 }
 

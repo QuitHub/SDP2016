@@ -7,9 +7,12 @@ import scala.io.StdIn
   */
 trait InputReceiver {
   def getInput(): String
+  def getChar(): Char
 }
 
 object StandardInputReceiver extends InputReceiver {
 
-  override def getInput = StdIn.readLine().toUpperCase
+  override def getInput = StdIn.readLine.toUpperCase
+
+  override def getChar(): Char = StdIn.readChar()
 }

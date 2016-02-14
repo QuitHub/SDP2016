@@ -1,4 +1,4 @@
-import scala.io.StdIn
+
 
 /**
   * 11/02/2016.
@@ -11,47 +11,65 @@ class MastermindGame() extends GameAbstractImpl() {
     * Run a one or more game sof mastermind, until the player
     * quits.
     */
+  val sir = StandardInputReceiver
+  val sor = StandardOutputRenderer
+  val siv = StandardInputValidator
+  val eLang = EnglishLanguage
+  val sgc = StandardGameConfigurer
+
+  override def runGames: Unit = {
+    //do intro in here
+    // renderIntro
+    playGame()
+  }
+
+  def playGame(): Unit = {
+    var board = makeBoard
+    sor.render(board.toString())
+    while (thereAreGuessesLeft(board) && !theCodeIsCracked(board)) {
+      board = board.updateBoard(Guess(getValidGuess))
+      sor.render(board.toString())
+    }
+    gameOverOutput(board)
+    if(getPlayAgain) playGame() // breaks if you dont enter a string and just press return
+  }
 
   def makeBoard: Board = {
-    val gc = StandardGameConfigurer
-    val randomCode = new RandomCode(4, gc)
-    val guessesleft = 2
-    val codeLength = 4
+    val randomCode = RandomCode(4, sgc)
+    val guessesLeft = sgc.getNumberOfTurns
+    val codeLength = sgc.getCodeLength
     val results = Vector[Result]()
     val show = true
-    val b = Board(guessesleft, codeLength, randomCode, results, show)
+    val b = Board(guessesLeft, codeLength, randomCode, results, show)
     b
   }
 
+  def thereAreGuessesLeft(b: Board): Boolean = b.numberOfGuessesLeft > 0
 
-  override def runGames: Unit = {
-    var board = makeBoard
-    print(board)
-    val sir = StandardInputReceiver
-    val sor = StandardOutputRender
-    val siv = StandardInputValidator
-    val lang = EnglishLanguage
-    var theyWon = !(board.results.isEmpty || !board.results.last.isCorrect)
-    while (!theyWon) {
-      var isValidGuess = false
-      var input = ""
-      while (!isValidGuess) {
-        sor.render(lang.getNextGuessString)
-        input = sir.getInput
-        isValidGuess = siv.validateInput(input)
-      }
-      val guess = new Guess(input)
-      board = board.updateBoard(guess)
-      theyWon = board.results.last.isCorrect || board.numberOfGuessesLeft == 0
-      println("they won: " +theyWon)
-      sor.render(board.toString())
+  def theCodeIsCracked(b: Board): Boolean = b.results.nonEmpty && b.results.last.isCorrect
 
+  def getValidGuess = {
+    var isValidGuess = false
+    var input = ""
+    while (!isValidGuess) {
+      sor.render(eLang.getNextGuessStr)
+      input = sir.getInput
+      isValidGuess = siv.validateInput(input)
     }
-    if(theyWon){
-      sor.render(lang.getWellDoneString)
+    input
+  }
+
+  def gameOverOutput(b: Board) = {
+    if (theCodeIsCracked(b)) {
+      sor.render(eLang.getWellDoneStr)
     } else {
-      sor.render(lang.getFailString)
+      sor.render(eLang.getFailStr)
     }
-    sor.render(lang.getQuitString)
+  }
+
+  def getPlayAgain = {
+    sor.render(eLang.getQuitStr)
+    val input = sir.getChar()
+    siv.playAgain(input)
   }
 }

@@ -1,6 +1,6 @@
 object Factory {
   def getInstance(c: Class[_], b: Boolean): Game = {
-    if(b){
+    if (b) {
 
       var showCodeGame = c.newInstance().asInstanceOf[MastermindGame]
       return showCodeGame

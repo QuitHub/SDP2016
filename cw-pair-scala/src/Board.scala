@@ -4,16 +4,17 @@
   * @author lukematthews
   */
 
-case class Board(numberOfGuessesLeft: Int,
-                 codeLength: Int,
+case class Board(numberOfGuessesLeft: Int = 0,
+                 codeLength: Int = 4,
                  secretCode: Code,
                  results: Vector[Result],
                  showCode: Boolean) {
 
-  override def toString(): String = {
+  override def toString: String = {
     var out = secretCodeToString
-    results.foreach(r => out += r.guess +" "+ r.resultStr + "\n")
-    for (i <- 1 to numberOfGuessesLeft) { /// put this in holes to string??????
+    results.foreach(r => out += r.guess + " " + r.resultStr + "\n")
+    for (i <- 1 to numberOfGuessesLeft) {
+      /// put this in holes to string??????
       out += rowToString + "\n"
     }
     out += guessesLeftToString + "\n"
@@ -22,7 +23,7 @@ case class Board(numberOfGuessesLeft: Int,
 
   def secretCodeToString = {
     var out = ""
-    if(showCode){
+    if (showCode) {
       out += secretCode.toString
     } else {
       out += rowToString
@@ -44,7 +45,7 @@ case class Board(numberOfGuessesLeft: Int,
     val randomCode = this.secretCode
     val result = guess.calculateResult(randomCode)
     var guessesLeft = this.numberOfGuessesLeft - 1
-    if(result.isCorrect){
+    if (result.isCorrect) {
       guessesLeft = 0
     }
     val codeLength = this.codeLength

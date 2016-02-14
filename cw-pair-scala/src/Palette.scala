@@ -11,18 +11,19 @@ case class Colour(colour: String) {
 }
 
 //How should we handle this error????????????
-object Colours {
+object Palette {
 
   private var colMap = scala.collection.mutable.Map[Char, Colour]()
 
   def addColour(col: Colour): Boolean = {
-    if(colMap.keySet.contains(col.getFirstChar())){
+    if (colMap.keySet.contains(col.getFirstChar())) {
       false
     } else {
-      colMap.+=(col.getFirstChar() -> col)
+      colMap += col.getFirstChar() -> col
       true
     }
   }
+
   def getColMap(): scala.collection.mutable.Map[Char, Colour] = {
     colMap
   }
