@@ -3,7 +3,7 @@ Welcome to Mastermind.
 This is a text version of the classic board game Mastermind.
 The computer will think of a secret code.
 The code consists of 4 colored pegs.
-The pegs may be one of six colors: blue, green , orange, purple, red, or yellow.
+The pegs may be one of six colors: blue, green, orange, purple, red, or yellow.
 A color may appear more than once in the code.
 
 You try to guess what colored pegs are in the code and what order they are in

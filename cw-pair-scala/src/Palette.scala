@@ -3,28 +3,26 @@
   *
   * @author lukematthews
   */
-case class Colour(colour: String) {
+case class Colour(name: String) {
 
-  def getFirstChar(): Char = {
-    colour.charAt(0)
+  def getFirstToUpper: Char = {
+    name.charAt(0).toUpper
   }
 }
 
-//How should we handle this error????????????
 object Palette {
 
-  private var colMap = scala.collection.mutable.Map[Char, Colour]()
-
+  var colMap = scala.collection.mutable.Map[Char, Colour]()
+  //How should we handle when someone adds a colour with the same letter
+  // as a colour already in there????????????
   def addColour(col: Colour): Boolean = {
-    if (colMap.keySet.contains(col.getFirstChar())) {
+
+    if (colMap.keySet.contains(col.getFirstToUpper)) {
       false
     } else {
-      colMap += col.getFirstChar() -> col
+      colMap += col.getFirstToUpper -> col
       true
     }
   }
 
-  def getColMap(): scala.collection.mutable.Map[Char, Colour] = {
-    colMap
-  }
 }

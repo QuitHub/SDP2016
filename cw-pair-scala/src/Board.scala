@@ -4,55 +4,42 @@
   * @author lukematthews
   */
 
-case class Board(numberOfGuessesLeft: Int = 0,
-                 codeLength: Int = 4,
+case class Board(numberOfGuessesLeft: Int,
+                 gs: GameSettings,
                  secretCode: Code,
-                 results: Vector[Result],
-                 showCode: Boolean) {
+                 results: Vector[Result]) {
 
   override def toString: String = {
-    var out = secretCodeToString
-    results.foreach(r => out += r.guess + " " + r.resultStr + "\n")
-    for (i <- 1 to numberOfGuessesLeft) {
-      /// put this in holes to string??????
-      out += rowToString + "\n"
-    }
-    out += guessesLeftToString + "\n"
-    out
+
+    secretCodeToString +
+    results.mkString("","\n","\n") +
+    emptyHoles
+
   }
+
+  def rowToString = { "." * gs.codeLength }
+
+  def emptyHoles = {(rowToString + "\n") * numberOfGuessesLeft + "\n"}
 
   def secretCodeToString = {
-    var out = ""
-    if (showCode) {
-      out += secretCode.toString
-    } else {
-      out += rowToString
-    }
-    out + " Secret Code \n"
-  }
-
-  def rowToString = {
-    var output = ""
-    for (i <- 1 to codeLength) {
-      output += "."
-    }
-    output
+    val sc = " Secret Code "
+    if (gs.showCode) secretCode.toString + sc
+     else rowToString + sc
   }
 
   def guessesLeftToString = s"You have $numberOfGuessesLeft guesses left."
 
   def updateBoard(guess: Guess): Board = {
-    val randomCode = this.secretCode
-    val result = guess.calculateResult(randomCode)
+    val result = guess.calculateResult(secretCode)
     var guessesLeft = this.numberOfGuessesLeft - 1
-    if (result.isCorrect) {
+    if (result.fullMatches == gs.codeLength) {
       guessesLeft = 0
     }
-    val codeLength = this.codeLength
-    val results = this.results :+ result
-    val show = this.showCode
-    val b = Board(guessesLeft, codeLength, randomCode, results, show)
-    b
+    Board(guessesLeft, gs, secretCode, this.results :+ result)
   }
+
+  def theCodeIsCracked = results.nonEmpty && results.last.fullMatches == gs.codeLength
+
+  def thereAreGuessesLeft = numberOfGuessesLeft > 0
 
 }

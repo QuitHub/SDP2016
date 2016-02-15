@@ -15,38 +15,28 @@ class MastermindGame() extends GameAbstractImpl() {
   val sor = StandardOutputRenderer
   val siv = StandardInputValidator
   val eLang = EnglishLanguage
-  val sgc = StandardGameConfigurer
+  val gs = Factory.getGameSettings(Factory.bo)
+
+  def gameSettings: GameSettings = gs
 
   override def runGames: Unit = {
-    //do intro in here
-    // renderIntro
+    sor.render(eLang.getIntroString)
     playGame()
   }
 
   def playGame(): Unit = {
     var board = makeBoard
     sor.render(board.toString())
-    while (thereAreGuessesLeft(board) && !theCodeIsCracked(board)) {
+    while (board.thereAreGuessesLeft && !board.theCodeIsCracked) {
       board = board.updateBoard(Guess(getValidGuess))
       sor.render(board.toString())
+      if (!board.theCodeIsCracked) sor.render(board.guessesLeftToString + "\n")
     }
     gameOverOutput(board)
-    if(getPlayAgain) playGame() // breaks if you dont enter a string and just press return
+    if (getPlayAgain) playGame()
   }
 
-  def makeBoard: Board = {
-    val randomCode = RandomCode(4, sgc)
-    val guessesLeft = sgc.getNumberOfTurns
-    val codeLength = sgc.getCodeLength
-    val results = Vector[Result]()
-    val show = true
-    val b = Board(guessesLeft, codeLength, randomCode, results, show)
-    b
-  }
-
-  def thereAreGuessesLeft(b: Board): Boolean = b.numberOfGuessesLeft > 0
-
-  def theCodeIsCracked(b: Board): Boolean = b.results.nonEmpty && b.results.last.isCorrect
+  def makeBoard: Board = Board(gs.numberOfTurns, gs, RandomCode(gs), Vector[Result]())
 
   def getValidGuess = {
     var isValidGuess = false
@@ -60,7 +50,7 @@ class MastermindGame() extends GameAbstractImpl() {
   }
 
   def gameOverOutput(b: Board) = {
-    if (theCodeIsCracked(b)) {
+    if (b.theCodeIsCracked) {
       sor.render(eLang.getWellDoneStr)
     } else {
       sor.render(eLang.getFailStr)
@@ -69,7 +59,8 @@ class MastermindGame() extends GameAbstractImpl() {
 
   def getPlayAgain = {
     sor.render(eLang.getQuitStr)
-    val input = sir.getChar()
+    val input = sir.getInput
     siv.playAgain(input)
   }
 }
+

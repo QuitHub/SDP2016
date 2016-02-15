@@ -1,41 +1,19 @@
 import scala.util.Random
 
-abstract class Code() {
+abstract class Code {
   var vector: Vector[Char] = Vector()
 
-  def stringToVector(s: String): Unit = {
-    s.foreach(c => vector = vector :+ c)
-  }
+  def stringToCode(s: String): Unit = s.foreach(c => vector = vector :+ c)
 
-  def calculateResult(other: Code): Result = {
-    var output = "Result: "
-    val zippedAndFiltered = filterOutMatched(this.vector, other.vector)
+  def calculateResult(other: Code): Result = Result(this, countPerfectMatches(other), countPartialMatches(other), Factory.getGameSettings(Factory.bo))
+
+  def countPerfectMatches(other: Code): Int = (this.vector, other.vector).zipped.filter(_ == _)._1.size
+
+  def countPartialMatches(other: Code): Int = {
+    val zippedAndFiltered = (this.vector, other.vector).zipped.filter(_ != _)
     val setA = zippedAndFiltered._1.toSet[Char]
     val setB = zippedAndFiltered._2.toSet[Char]
-    output = output + getBlacks(this.vector, other.vector) + getWhites(setA, setB)
-    if (output.equals("Result: ")) {
-      output += output + "No Pegs"
-    }
-    val isCorrect = (this.vector, other.vector).zipped.filter(_ == _)._1.size == 4
-    Result(this, output, isCorrect)
-  }
-
-  def getBlacks(guess: Vector[Char], other: Vector[Char]): String = {
-    var output = ""
-    val numberOfmatches = (guess, other).zipped.filter(_ == _)._1.size
-    for (i <- 1 to numberOfmatches) output = output + "black "
-    output
-  }
-
-  def getWhites(setA: Set[Char], setB: Set[Char]): String = {
-    var output = ""
-    val numberOfCommonElements = setA.intersect(setB).size
-    for (i <- 1 to numberOfCommonElements) output = output + "white "
-    output
-  }
-
-  def filterOutMatched(guess: Vector[Char], other: Vector[Char]): (Vector[Char], Vector[Char]) = {
-    (guess, other).zipped.filter(_ != _)
+    setA.intersect(setB).size
   }
 
   override def toString(): String = {
@@ -43,17 +21,10 @@ abstract class Code() {
   }
 }
 
-/**
-  * 11/02/2016.
-  *
-  * @author lukematthews
-  */
-case class Result(guess: Code, resultStr: String, isCorrect: Boolean)
-
-case class RandomCode(length: Int, gameConfigurer: GameConfigurer) extends Code {
+case class RandomCode(gs: GameSettings) extends Code {
 
   {
-    stringToVector(generateRandomString(length))
+    stringToCode(generateRandomString(gs.codeLength))
   }
 
   def generateRandomString(length: Int): String = {
@@ -64,12 +35,13 @@ case class RandomCode(length: Int, gameConfigurer: GameConfigurer) extends Code 
       .mkString
   }
 
-  def isValidChar(c: Char): Boolean = {
-    gameConfigurer.getColours.keySet.contains(c)
-  }
+  def isValidChar(c: Char): Boolean = gs.getColours.keySet.contains(c)
+
 }
 
-case class Guess(input: String) extends Code {
-  stringToVector(input)
-}
+case class Guess(input: String) extends Code { stringToCode(input) }
 
+case class Result(guess: Code, fullMatches: Int, partialMatches: Int, gameSettings: GameSettings){
+
+ override def toString: String = guess.toString() + " "+ gameSettings.perfectMatchStr * fullMatches + " "+ gameSettings.partialMatchStr * partialMatches
+}

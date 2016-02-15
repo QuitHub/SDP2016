@@ -9,7 +9,7 @@ trait OutputRenderer {
 
 object StandardOutputRenderer extends OutputRenderer {
   override def render(s: String): Unit = {
-    println(s)
+    print(s)
   }
 
 

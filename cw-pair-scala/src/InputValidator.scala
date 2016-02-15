@@ -5,14 +5,14 @@
   */
 trait InputValidator {
   def validateInput(string: String): Boolean
-  def playAgain(char: Char): Boolean
+  def playAgain(str: String): Boolean
 }
 
 object StandardInputValidator extends InputValidator {
-  val conf = StandardGameConfigurer
+  val conf = Factory.getGameSettings(Factory.bo)
 
   override def validateInput(input: String): Boolean = {
-    if (input.length != StandardGameConfigurer.getCodeLength) {
+    if (input.length != conf.codeLength) {
       return false
     }
     val inputSet = input.toStream.toSet[Char]
@@ -20,7 +20,7 @@ object StandardInputValidator extends InputValidator {
     inputSet.intersect(colourCharSet).equals(inputSet)
   }
 
-  override def playAgain(char: Char): Boolean = {
-    (char == 'y' || char == 'Y')
+  override def playAgain(str: String): Boolean = {
+    str == "Y"
   }
 }
