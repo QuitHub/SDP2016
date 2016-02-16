@@ -9,11 +9,9 @@ case class MastermindGame(sir: InputReceiver = StandardInputReceiver,
                           sor: OutputRenderer = StandardOutputRenderer,
                           eLang: Language = EnglishLanguage(),
                           gs: GameSettings = StandardGameSettings()
-                         ) extends GameAbstractImpl() {
+                         ) {
 
-
-
-  override def runGames: Unit = {
+  def runGames(): Unit = {
     sor.render(eLang.introString)
     playGame()
   }
@@ -47,7 +45,6 @@ case class MastermindGame(sir: InputReceiver = StandardInputReceiver,
     val colourCharSet = gs.getColoursMap.keySet
     inputSet.intersect(colourCharSet).equals(inputSet)
   }
-
 
   @tailrec
   private def keepGuessing(b: Board): Board = {
