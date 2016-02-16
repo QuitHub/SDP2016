@@ -5,13 +5,13 @@ import scala.annotation.tailrec
   *
   * @author lukematthews
   */
-class MastermindGame() extends GameAbstractImpl() {
+case class MastermindGame(sir: InputReceiver = StandardInputReceiver,
+                          sor: OutputRenderer = StandardOutputRenderer,
+                          eLang: Language = EnglishLanguage,
+                          gs: GameSettings = StandardGameSettings()
+                         ) extends GameAbstractImpl() {
 
-  val sir = StandardInputReceiver
-  val sor = StandardOutputRenderer
-  val siv = StandardInputValidator
-  val eLang = EnglishLanguage
-  val gs = StandardGameSettings()
+
 
   override def runGames: Unit = {
     sor.render(eLang.introString)
@@ -32,12 +32,22 @@ class MastermindGame() extends GameAbstractImpl() {
   @tailrec
   private def validGuessString: String = {
     sor.render(eLang.nextGuessStr)
-    val input = sir.getInput
-    if (siv.validateInput(input))
-      input
+    val str = sir.getInputAsUpper
+    if (validateGuess(str))
+      str
     else
-      validGuessString
+      validGuessString // if not valid recursively seek valid one
   }
+
+  private def validateGuess(input: String): Boolean = {
+    if (input.length != gs.codeLength) {
+      return false
+    }
+    val inputSet = input.toStream.toSet[Char]
+    val colourCharSet = gs.getColoursMap.keySet
+    inputSet.intersect(colourCharSet).equals(inputSet)
+  }
+
 
   @tailrec
   private def keepGuessing(b: Board): Board = {
@@ -61,6 +71,6 @@ class MastermindGame() extends GameAbstractImpl() {
 
   private def wannaPlayAgain = {
     sor.render(eLang.quitStr)
-    siv.playAgain(sir.getInput)
+    sir.getInputAsUpper == "Y"
   }
 }

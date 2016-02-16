@@ -27,39 +27,32 @@ case class StandardGameSettings(codeLength: Int = 4,
                                 var showCode: Boolean = false,
                                 perfectMatchStr: String = "black",
                                 partialMatchStr: String = "white",
-                                colourNames: Vector[String] = Vector("Blue", "Green", "Orange", "Purple", "Red", "Yellow")
+                                colourNames: Vector[String] = Vector("Turquoise", "Green", "Orange", "Purple", "Maroon", "Yellow")
                                ) extends GameSettings {
-  def getColoursMap = colMap
+
 
   var colMap = scala.collection.mutable.Map[Char, Colour]()
   setColours(colourNames)
 
+  def getColoursMap = colMap
+
   override def setColours(colourNames: Vector[String]) = {
-    for (name <- colourNames) {
-      val nameCapped = name.capitalize
-      addColour(Colour(nameCapped))
-    }
+    colourNames.foreach(name =>
+      addColour(Colour(name.capitalize)))
   }
 
-  override def getColourSet: Set[Colour] = {
-    colMap.values.toSet
-  }
+  override def getColourSet: Set[Colour] = colMap.values.toSet
 
   def addColour(col: Colour): Boolean = {
 
-    if (colMap.keySet.contains(col.getFirstToUpper)) {
+    if (colMap.keySet.contains(col.firstCharToUpper)) {
       false
     } else {
-      colMap += col.getFirstToUpper -> col
+      colMap += col.firstCharToUpper -> col
       true
     }
   }
 }
 
-case class Colour(name: String) {
-
-  def getFirstToUpper: Char = {
-    name.charAt(0).toUpper
-  }
-}
+case class Colour(name: String) { def firstCharToUpper: Char = name.charAt(0).toUpper }
 

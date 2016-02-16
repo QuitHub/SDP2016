@@ -17,16 +17,11 @@ case class Board(numberOfGuessesLeft: Int,
     }
     sb.append(results.mkString("", "\n", "") + emptyHoles)
     sb.toString()
-
   }
 
-  def rowToString = {
-    "." * gs.codeLength
-  }
+  def rowToString = "." * gs.codeLength
 
-  def emptyHoles = {
-    "\n" + (rowToString + "\n") * numberOfGuessesLeft + "\n"
-  }
+  def emptyHoles = "\n" + (rowToString + "\n") * numberOfGuessesLeft + "\n"
 
   def secretCodeToString = {
     val sc = " Secret Code "
@@ -42,7 +37,8 @@ case class Board(numberOfGuessesLeft: Int,
   }
 
   def guessesLeft(result: Result): Int = {
-    if (result.fullMatches == gs.codeLength) 0 else numberOfGuessesLeft - 1
+    if (result.fullMatches == gs.codeLength) 0
+    else numberOfGuessesLeft - 1
   }
 
   def theCodeIsCracked = results.nonEmpty && results.last.fullMatches == gs.codeLength

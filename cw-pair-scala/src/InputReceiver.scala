@@ -6,12 +6,12 @@ import scala.io.StdIn
   * @author lukematthews
   */
 trait InputReceiver {
-  def getInput(): String
+  def getInputAsUpper(): String
 
 }
 
 object StandardInputReceiver extends InputReceiver {
 
-  override def getInput = StdIn.readLine.toUpperCase
+  override def getInputAsUpper = StdIn.readLine.toUpperCase
 
 }
