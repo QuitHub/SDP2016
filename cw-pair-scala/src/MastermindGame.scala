@@ -1,4 +1,4 @@
-
+import scala.annotation.tailrec
 
 /**
   * 11/02/2016.
@@ -7,60 +7,60 @@
   */
 class MastermindGame() extends GameAbstractImpl() {
 
-  /**
-    * Run a one or more game sof mastermind, until the player
-    * quits.
-    */
   val sir = StandardInputReceiver
   val sor = StandardOutputRenderer
   val siv = StandardInputValidator
   val eLang = EnglishLanguage
-  val gs = Factory.getGameSettings(Factory.bo)
-
-  def gameSettings: GameSettings = gs
+  val gs = StandardGameSettings()
 
   override def runGames: Unit = {
-    sor.render(eLang.getIntroString)
+    sor.render(eLang.introString)
     playGame()
   }
 
-  def playGame(): Unit = {
-    var board = makeBoard
+  @tailrec
+  private def playGame(): Unit = {
+    val board = makeBoard
     sor.render(board.toString())
-    while (board.thereAreGuessesLeft && !board.theCodeIsCracked) {
-      board = board.updateBoard(Guess(getValidGuess))
-      sor.render(board.toString())
-      if (!board.theCodeIsCracked) sor.render(board.guessesLeftToString + "\n")
-    }
-    gameOverOutput(board)
-    if (getPlayAgain) playGame()
+    val boardAfterGameOver = keepGuessing(board)
+    gameOverOutput(boardAfterGameOver)
+    if (wannaPlayAgain) playGame()
   }
 
-  def makeBoard: Board = Board(gs.numberOfTurns, gs, RandomCode(gs), Vector[Result]())
+  private def makeBoard: Board = Board(gs.numberOfTurns, gs, RandomCode(gs), Vector[Result]())
 
-  def getValidGuess = {
-    var isValidGuess = false
-    var input = ""
-    while (!isValidGuess) {
-      sor.render(eLang.getNextGuessStr)
-      input = sir.getInput
-      isValidGuess = siv.validateInput(input)
-    }
-    input
-  }
-
-  def gameOverOutput(b: Board) = {
-    if (b.theCodeIsCracked) {
-      sor.render(eLang.getWellDoneStr)
-    } else {
-      sor.render(eLang.getFailStr)
-    }
-  }
-
-  def getPlayAgain = {
-    sor.render(eLang.getQuitStr)
+  @tailrec
+  private def validGuessString: String = {
+    sor.render(eLang.nextGuessStr)
     val input = sir.getInput
-    siv.playAgain(input)
+    if (siv.validateInput(input))
+      input
+    else
+      validGuessString
+  }
+
+  @tailrec
+  private def keepGuessing(b: Board): Board = {
+    val guess = Guess(validGuessString)
+    val updatedBoard = b.updateBoard(guess)
+    sor.render(updatedBoard.toString)
+    if (updatedBoard.thereAreGuessesLeft && !updatedBoard.theCodeIsCracked) {
+      sor.render(updatedBoard.guessesLeftToString + "\n")
+      keepGuessing(updatedBoard)
+    } else {
+      updatedBoard
+    }
+  }
+
+  private def gameOverOutput(b: Board) = {
+    if (b.theCodeIsCracked)
+      sor.render(eLang.wellDoneStr)
+    else
+      sor.render(eLang.failStr)
+  }
+
+  private def wannaPlayAgain = {
+    sor.render(eLang.quitStr)
+    siv.playAgain(sir.getInput)
   }
 }
-

@@ -3,9 +3,9 @@ import scala.util.Random
 abstract class Code {
   var vector: Vector[Char] = Vector()
 
-  def stringToCode(s: String): Unit = s.foreach(c => vector = vector :+ c)
+  def stringToCode(s: String): Unit = s.toVector foreach (c => vector = vector :+ c)
 
-  def calculateResult(other: Code): Result = Result(this, countPerfectMatches(other), countPartialMatches(other), Factory.getGameSettings(Factory.bo))
+  def calculateResult(other: Code): Result = Result(this, countPerfectMatches(other), countPartialMatches(other), StandardGameSettings())
 
   def countPerfectMatches(other: Code): Int = (this.vector, other.vector).zipped.filter(_ == _)._1.size
 
@@ -16,9 +16,7 @@ abstract class Code {
     setA.intersect(setB).size
   }
 
-  override def toString(): String = {
-    vector.mkString
-  }
+  override def toString(): String = vector.mkString
 }
 
 case class RandomCode(gs: GameSettings) extends Code {
@@ -35,13 +33,20 @@ case class RandomCode(gs: GameSettings) extends Code {
       .mkString
   }
 
-  def isValidChar(c: Char): Boolean = gs.getColours.keySet.contains(c)
+  def isValidChar(c: Char): Boolean = gs.getColoursMap.keySet.contains(c)
 
 }
 
-case class Guess(input: String) extends Code { stringToCode(input) }
+case class Guess(input: String) extends Code {
+  stringToCode(input)
+}
 
-case class Result(guess: Code, fullMatches: Int, partialMatches: Int, gameSettings: GameSettings){
-
- override def toString: String = guess.toString() + " "+ gameSettings.perfectMatchStr * fullMatches + " "+ gameSettings.partialMatchStr * partialMatches
+case class Result(guess: Code, fullMatches: Int, partialMatches: Int, gs: GameSettings) {
+  override def toString: String = {
+    if(fullMatches + partialMatches == 0){
+      guess.toString() + " no pegs"
+    } else {
+      guess.toString() + " " + s"${gs.perfectMatchStr} " * fullMatches + s"${gs.partialMatchStr} " * partialMatches
+    }
+  }
 }

@@ -14,5 +14,4 @@ object StandardInputReceiver extends InputReceiver {
 
   override def getInput = StdIn.readLine.toUpperCase
 
-
 }

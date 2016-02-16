@@ -5,51 +5,47 @@
   */
 trait Language {
 
-  def getNextGuessStr: String
+  def nextGuessStr: String
 
-  def getWellDoneStr: String
+  def wellDoneStr: String
 
-  def getFailStr: String
+  def failStr: String
 
-  def getQuitStr: String
+  def quitStr: String
 
-  def getIntroString: String
-
-  def setGameSettings(): GameSettings
+  def introString: String
 
 }
 
 object EnglishLanguage extends Language {
 
-  var gs = setGameSettings()
+  val gs = StandardGameSettings()
 
-  def setGameSettings() = { Factory.getGameSettings(Factory.bo) }
-
-
-  override def getNextGuessStr: String = {
+  override def nextGuessStr: String = {
     """What is your next guess?
 Type in the characters for your guess and press enter.
 Enter guess: """
   }
 
-  override def getWellDoneStr: String = {
+  override def wellDoneStr: String = {
     "You solved the puzzle! Good Job!\n"
   }
 
-  override def getQuitStr: String = {
+  override def quitStr: String = {
     "Enter Y for another game or anything else to quit: "
   }
 
-  override def getFailStr: String = {
-    "You did not solve the puzzle too bad."
+  override def failStr: String = {
+    "You did not solve the puzzle too bad.\n"
   }
 
-  override def getIntroString: String = {s"""Welcome to Mastermind.
+  override def introString: String = {
+    s"""Welcome to Mastermind.
 
 This is a text version of the classic board game Mastermind.
 The computer will think of a secret code.
 The code consists of ${gs.codeLength} colored pegs.
-The pegs may be one of ${gs.getColours.size} colors: $listColours
+The pegs may be one of ${gs.getColourSet.size} colors: $listColours
 A color may appear more than once in the code.
 
 You try to guess what colored pegs are in the code and what order they are in.
@@ -64,19 +60,20 @@ You have ${gs.numberOfTurns} attempts to guess the answer or you lose the game.
 
 Generating secret code ....
 
-"""}
+"""
+  }
 
   def listColours: String = {
-    gs.getColours.values.
-      takeWhile(col => col != gs.getColours.values.last).
-      mkString(", ") +
-      s"or ${gs.getColours.values.last.name}."
+    val sb = StringBuilder.newBuilder
+    gs.getColourSet.
+      takeWhile(col => col != gs.getColourSet.last).foreach(c => sb append s"${c.name}, ")
+      sb append  s"or ${gs.getColourSet.last.name}."
+     sb.toString()
   }
 
   def getExamples: String = {
-
-    val firstEl = gs.getColours.head
-    val secondEl = gs.getColours.tail.head
+    val firstEl = gs.getColoursMap.head
+    val secondEl = gs.getColoursMap.tail.head
     s"${firstEl._1} for ${firstEl._2.name}, ${secondEl._1} for ${secondEl._2.name},"
   }
 }

@@ -5,18 +5,19 @@
   */
 trait InputValidator {
   def validateInput(string: String): Boolean
+
   def playAgain(str: String): Boolean
 }
 
 object StandardInputValidator extends InputValidator {
-  val conf = Factory.getGameSettings(Factory.bo)
+  val conf = StandardGameSettings()
 
   override def validateInput(input: String): Boolean = {
     if (input.length != conf.codeLength) {
       return false
     }
     val inputSet = input.toStream.toSet[Char]
-    val colourCharSet = conf.getColours.keySet
+    val colourCharSet = conf.getColoursMap.keySet
     inputSet.intersect(colourCharSet).equals(inputSet)
   }
 
