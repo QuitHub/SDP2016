@@ -6,7 +6,7 @@ import scala.io.StdIn
   * @author lukematthews
   */
 trait InputReceiver {
-  def getInputAsUpper(): String
+  def getInputAsUpper: String
 
 }
 

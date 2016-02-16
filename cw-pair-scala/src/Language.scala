@@ -17,9 +17,7 @@ trait Language {
 
 }
 
-object EnglishLanguage extends Language {
-
-  val gs = StandardGameSettings()
+case class EnglishLanguage(gs: GameSettings = StandardGameSettings()) extends Language {
 
   override def nextGuessStr: String = {
     """What is your next guess?
@@ -27,17 +25,12 @@ Type in the characters for your guess and press enter.
 Enter guess: """
   }
 
-  override def wellDoneStr: String = {
-    "You solved the puzzle! Good Job!\n"
-  }
+  override def wellDoneStr: String = "You solved the puzzle! Good Job!\n"
 
-  override def quitStr: String = {
-    "Enter Y for another game or anything else to quit: "
-  }
+  override def quitStr: String = "Enter Y for another game or anything else to quit: "
 
-  override def failStr: String = {
-    "You did not solve the puzzle too bad.\n"
-  }
+  override def failStr: String = "You did not solve the puzzle too bad.\n"
+
 
   override def introString: String = {
     s"""Welcome to Mastermind.

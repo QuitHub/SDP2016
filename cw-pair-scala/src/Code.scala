@@ -16,8 +16,10 @@ abstract class Code {
     setA.intersect(setB).size
   }
 
-  override def toString(): String = vector.mkString
+  override def toString: String = vector.mkString
 }
+
+
 
 case class RandomCode(gs: GameSettings) extends Code {
 
@@ -37,9 +39,13 @@ case class RandomCode(gs: GameSettings) extends Code {
 
 }
 
+
+
 case class Guess(input: String) extends Code {
   stringToCode(input)
 }
+
+
 
 case class Result(guess: Code, fullMatches: Int, partialMatches: Int, gs: GameSettings) {
   override def toString: String = {

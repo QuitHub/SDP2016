@@ -7,7 +7,7 @@ import scala.annotation.tailrec
   */
 case class MastermindGame(sir: InputReceiver = StandardInputReceiver,
                           sor: OutputRenderer = StandardOutputRenderer,
-                          eLang: Language = EnglishLanguage,
+                          eLang: Language = EnglishLanguage(),
                           gs: GameSettings = StandardGameSettings()
                          ) extends GameAbstractImpl() {
 
