@@ -34,7 +34,6 @@ case class StandardGameSettings(codeLength: Int = 4,
   var colMap = scala.collection.mutable.Map[Char, Colour]()
   setColours(colourNames)
 
-  def getColoursMap = colMap
 
   override def setColours(colourNames: Vector[String]) = {
     colourNames.foreach(name =>
@@ -42,6 +41,8 @@ case class StandardGameSettings(codeLength: Int = 4,
   }
 
   override def getColourSet: Set[Colour] = colMap.values.toSet
+
+  override def getColoursMap = colMap
 
   def addColour(col: Colour): Boolean = {
 
