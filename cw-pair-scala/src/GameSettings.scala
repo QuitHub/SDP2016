@@ -27,7 +27,7 @@ case class StandardGameSettings(codeLength: Int = 4,
                                 var showCode: Boolean = false,
                                 perfectMatchStr: String = "black",
                                 partialMatchStr: String = "white",
-                                colourNames: Vector[String] = Vector("Turquoise", "Green", "Orange", "Purple", "Maroon", "Yellow")
+                                colourNames: Vector[String] = Vector("Blue", "Green", "Orange", "Purple", "Red", "Yellow")
                                ) extends GameSettings {
 
 
