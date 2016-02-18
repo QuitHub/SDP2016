@@ -17,7 +17,8 @@ trait Language {
 
 }
 
-case class EnglishLanguage(gs: GameSettings = StandardGameSettings()) extends Language {
+case class EnglishLanguage(gs: GameSettings = StandardGameSettings(),
+                           palette: Palette = StandardPalette()) extends Language {
 
   override def nextGuessStr: String = {
     """What is your next guess?
@@ -38,7 +39,7 @@ Enter guess: """
 This is a text version of the classic board game Mastermind.
 The computer will think of a secret code.
 The code consists of ${gs.codeLength} colored pegs.
-The pegs may be one of ${gs.getColourSet.size} colors: $listColours
+The pegs may be one of ${palette.colourSet.size} colors: $listColours
 A color may appear more than once in the code.
 
 You try to guess what colored pegs are in the code and what order they are in.
@@ -58,15 +59,15 @@ Generating secret code ....
 
   def listColours: String = {
     val sb = StringBuilder.newBuilder
-    gs.getColourSet.
-      takeWhile(col => col != gs.getColourSet.last).foreach(c => sb append s"${c.name}, ")
-      sb append  s"or ${gs.getColourSet.last.name}."
+    palette.colourSet.
+      takeWhile(col => col != palette.colourSet.last).foreach(c => sb append s"${c.name}, ")
+      sb append  s"or ${palette.colourSet.last.name}."
      sb.toString()
   }
 
   def getExamples: String = {
-    val firstEl = gs.getColoursMap.head
-    val secondEl = gs.getColoursMap.tail.head
+    val firstEl = palette.colourMap.head
+    val secondEl = palette.colourMap.tail.head
     s"${firstEl._1} for ${firstEl._2.name}, ${secondEl._1} for ${secondEl._2.name},"
   }
 }

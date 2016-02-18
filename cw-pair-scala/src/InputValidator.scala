@@ -4,16 +4,20 @@
   * @author lukematthews
   */
 trait InputValidator {
-  def validateInput(str: String): Boolean
+  def validateGuess(str: String): Boolean
+  def validatePlayAgain(str: String): Boolean
 }
 
 
-case class StandardInputValidator(gs: GameSettings = StandardGameSettings()) extends InputValidator {
+case class StandardInputValidator(palette: Palette = StandardPalette(),
+                                  gameSettings: GameSettings = StandardGameSettings()) extends InputValidator {
 
-  override def validateInput(input: String): Boolean = {
-    if (input.length != gs.codeLength) return false
+  override def validateGuess(input: String): Boolean = {
+    if (input.length != gameSettings.codeLength) return false
     val inputSet = input.toSet[Char]
-    val colourCharSet = gs.getColoursMap.keySet
-    inputSet.intersect(colourCharSet).equals(inputSet)
+    inputSet.intersect(palette.charsInUse).equals(inputSet)
+  }
+  override def validatePlayAgain(str: String): Boolean = {
+    str == "Y"
   }
 }

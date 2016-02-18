@@ -4,14 +4,14 @@
   * @author lukematthews
   */
 
-case class Board(numberOfGuessesLeft: Int,
-                 gs: GameSettings,
-                 secretCode: Code,
-                 results: Vector[Result]) {
+case class Board(val numberOfGuessesLeft: Int = 12,
+                 val codeLength: Int = 4,
+                 val secretCode: RandomCode,
+                 val results: Vector[Result] = Vector[Result]()) {
 
   override def toString: String = {
     val sb = StringBuilder.newBuilder
-    sb.append("\n" + secretCodeToString)
+    sb.append("\n" + secretCode.toString)
     if (results.nonEmpty) {
       sb.append("\n")
     }
@@ -19,29 +19,23 @@ case class Board(numberOfGuessesLeft: Int,
     sb.toString()
   }
 
-  def rowToString = "." * gs.codeLength
+  private def rowToString = "." * codeLength
 
-  def emptyHoles = "\n" + (rowToString + "\n") * numberOfGuessesLeft + "\n"
-
-  def secretCodeToString = {
-    val sc = " Secret Code "
-    if (gs.showCode) secretCode.toString + sc
-    else rowToString + sc
-  }
+  private def emptyHoles = "\n" + (rowToString + "\n") * numberOfGuessesLeft + "\n"
 
   def guessesLeftToString = s"You have $numberOfGuessesLeft guesses left."
 
   def updateBoard(guess: Guess): Board = {
     val result = guess.calculateResult(secretCode)
-    Board(guessesLeft(result), gs, secretCode, this.results :+ result)
+    Board(guessesLeft(result), codeLength, secretCode, this.results :+ result)
   }
 
-  def guessesLeft(result: Result): Int = {
-    if (result.fullMatches == gs.codeLength) 0
+  private def guessesLeft(result: Result): Int = {
+    if (result.fullMatches == codeLength) 0
     else numberOfGuessesLeft - 1
   }
 
-  def theCodeIsCracked = results.nonEmpty && results.last.fullMatches == gs.codeLength
+  def theCodeIsCracked = results.nonEmpty && results.last.fullMatches == codeLength
 
   def thereAreGuessesLeft = numberOfGuessesLeft > 0
 

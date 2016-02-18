@@ -9,40 +9,40 @@ trait GameSettings {
 
   def numberOfTurns: Int
 
-  def getColourSet: Set[Colour]
-
-  def setColours(colours: Vector[String])
-
   def perfectMatchStr: String
 
   def partialMatchStr: String
 
-  def showCode: Boolean
-
-  def getColoursMap: scala.collection.mutable.Map[Char, Colour]
 }
 
 case class StandardGameSettings(codeLength: Int = 4,
                                 numberOfTurns: Int = 12,
-                                var showCode: Boolean = false,
                                 perfectMatchStr: String = "black",
-                                partialMatchStr: String = "white",
-                                colourNames: Vector[String] = Vector("Blue", "Green", "Orange", "Purple", "Red", "Yellow")
-                               ) extends GameSettings {
+                                partialMatchStr: String = "white"
 
+                               ) extends GameSettings
+
+case class StandardPalette(colourNames: Vector[String] =
+                           Vector("Blue", "Swedish Blond",
+                             "Orange", "Purple", "Red",
+                             "Yellow", "Swedish red")) extends Palette {
+  super.addColours(colourNames)
+}
+
+trait Palette {
 
   var colMap = scala.collection.mutable.Map[Char, Colour]()
-  setColours(colourNames)
 
-
-  override def setColours(colourNames: Vector[String]) = {
+  def addColours(colourNames: Vector[String]) = {
     colourNames.foreach(name =>
       addColour(Colour(name.capitalize)))
   }
 
-  override def getColourSet: Set[Colour] = colMap.values.toSet
+  def colourSet: Set[Colour] = colMap.values.toSet
 
-  override def getColoursMap = colMap
+  def colourMap = colMap
+
+  def charsInUse = colMap.keySet
 
   def addColour(col: Colour): Boolean = {
 

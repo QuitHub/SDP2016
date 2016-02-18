@@ -30,7 +30,7 @@ case class MastermindGame(sir: InputReceiver = StandardInputReceiver,
   private def validGuessString: String = {
     sor.render(eLang.nextGuessStr)
     val str = sir.getInputAsUpper
-    if (iv.validateInput(str))
+    if (iv.validateGuess(str))
       str
     else
       validGuessString // if not valid recursively seek valid one
