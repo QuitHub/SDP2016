@@ -5,7 +5,9 @@
   */
 trait Language {
 
-  def nextGuessStr: String = {
+  def introString: String
+
+  def nextGuessStr = {
     """What is your next guess?
 Type in the characters for your guess and press enter.
 Enter guess: """
@@ -17,19 +19,17 @@ Enter guess: """
 
   def quitStr = "Enter Y for another game or anything else to quit: "
 
-  def introString: String
-
   def perfectMatchStr = "Black"
 
   def partialMatchStr = "White"
 
-  def noMatchString = "No pegs"
+  def noMatchStr = "No pegs"
 
+  def playAgainStr = "Y"
 }
 
 case class EnglishLanguage(gs: GameSettings = StandardGameSettings(),
                            palette: Palette = StandardPalette()) extends Language {
-
 
   override def introString: String = {
     s"""Welcome to Mastermind.
@@ -59,8 +59,8 @@ Generating secret code ....
     val sb = StringBuilder.newBuilder
     palette.colourSet.
       takeWhile(col => col != palette.colourSet.last).foreach(c => sb append s"$c, ")
-      sb append  s"or ${palette.colourSet.last}."
-     sb.toString()
+    sb append s"or ${palette.colourSet.last}."
+    sb.toString()
   }
 
   def getExamples: String = {

@@ -1,16 +1,20 @@
+import StringUtils._
+
+
 /**
   * 13/02/2016.
   *
   * @author lukematthews
   */
 
-
 case class Board(val numberOfGuessesLeft: Int,
                  val showCode: Boolean,
-                 val secretCode: String,
+                 val codeLength: Int,
+                 val palette: Palette,
                  val results: Vector[String] = Vector[String]()) {
 
-  val codeLength = secretCode.length
+  val secretCode = StringUtils.randomStringFromCharSet(codeLength, palette.colourCharSet)
+
   override def toString: String = {
     val sb = StringBuilder.newBuilder
     sb.append("\n" + visibleString(showCode) + " Secret Code ")
@@ -25,11 +29,12 @@ case class Board(val numberOfGuessesLeft: Int,
 
   private def emptyHoles = "\n" + (rowToString + "\n") * numberOfGuessesLeft + "\n"
 
-  def visibleString(visible : Boolean): String ={
+  private def visibleString(visible : Boolean): String ={
     if(visible)
       secretCode
      else
       rowToString
   }
 
+  def foo = (x: Int) => x * x
 }

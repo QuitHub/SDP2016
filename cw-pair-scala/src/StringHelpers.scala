@@ -26,7 +26,7 @@ object StringUtils {
       val fullMatches = countPerfectMatches(other)
       val partialMatches = countPartialMatches(other)
       if(fullMatches + partialMatches == 0){
-        str + " " + lang.noMatchString
+        str + " " + lang.noMatchStr
       } else {
         str + " " + s"${lang.perfectMatchStr} " * fullMatches + s"${lang.partialMatchStr} " * partialMatches
       }

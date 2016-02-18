@@ -2,8 +2,12 @@ object MastermindDriver {
   def main(args: Array[String]) {
     val gs = StandardGameSettings()
     val palette = StandardPalette()
-    val randomCode = StringUtils.randomStringFromCharSet(gs.codeLength, palette.colourCharSet)
-    val b = Board(gs.numberOfTurns, true, randomCode)
+    val b = Board(
+      gs.numberOfTurns,
+      true,
+      gs.codeLength,
+      StandardPalette()
+    )
     val gameState = GameState(gs.numberOfTurns)
 
     val g = MastermindGame(board = b, gameState = gameState)
@@ -11,3 +15,13 @@ object MastermindDriver {
 
   }
 }
+
+trait GameSettings {
+
+  def codeLength: Int = 4
+
+  def numberOfTurns: Int = 12
+
+}
+
+case class StandardGameSettings() extends GameSettings

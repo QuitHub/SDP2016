@@ -5,7 +5,6 @@
   */
 trait InputValidator {
   def validateGuess(str: String): Boolean
-  def validatePlayAgain(str: String): Boolean
 }
 
 
@@ -17,7 +16,5 @@ case class StandardInputValidator(palette: Palette = StandardPalette(),
     val inputSet = input.toSet[Char]
     inputSet.intersect(palette.colourCharSet).equals(inputSet)
   }
-  override def validatePlayAgain(str: String): Boolean = {
-    str == "Y"
-  }
+
 }
