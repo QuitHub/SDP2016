@@ -15,7 +15,7 @@ case class StandardInputValidator(palette: Palette = StandardPalette(),
   override def validateGuess(input: String): Boolean = {
     if (input.length != gameSettings.codeLength) return false
     val inputSet = input.toSet[Char]
-    inputSet.intersect(palette.charsInUse).equals(inputSet)
+    inputSet.intersect(palette.colourCharSet).equals(inputSet)
   }
   override def validatePlayAgain(str: String): Boolean = {
     str == "Y"

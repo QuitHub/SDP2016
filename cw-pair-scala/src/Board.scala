@@ -4,14 +4,17 @@
   * @author lukematthews
   */
 
+import StringUtils._
+
 case class Board(val numberOfGuessesLeft: Int = 12,
                  val codeLength: Int = 4,
-                 val secretCode: RandomCode,
+                 val showCode: Boolean = false,
+                 val secretCode: String,
                  val results: Vector[Result] = Vector[Result]()) {
 
   override def toString: String = {
     val sb = StringBuilder.newBuilder
-    sb.append("\n" + secretCode.toString)
+    sb.append("\n" + secretCode.visibleString(showCode) + " Secret Code ")
     if (results.nonEmpty) {
       sb.append("\n")
     }
@@ -25,9 +28,9 @@ case class Board(val numberOfGuessesLeft: Int = 12,
 
   def guessesLeftToString = s"You have $numberOfGuessesLeft guesses left."
 
-  def updateBoard(guess: Guess): Board = {
+  def updateBoard(guess: String): Board = {
     val result = guess.calculateResult(secretCode)
-    Board(guessesLeft(result), codeLength, secretCode, this.results :+ result)
+    Board(guessesLeft(result), codeLength, showCode, secretCode, this.results :+ result)
   }
 
   private def guessesLeft(result: Result): Int = {

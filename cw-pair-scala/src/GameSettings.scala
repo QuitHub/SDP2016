@@ -9,51 +9,32 @@ trait GameSettings {
 
   def numberOfTurns: Int
 
-  def perfectMatchStr: String
-
-  def partialMatchStr: String
-
 }
 
 case class StandardGameSettings(codeLength: Int = 4,
-                                numberOfTurns: Int = 12,
-                                perfectMatchStr: String = "black",
-                                partialMatchStr: String = "white"
-
+                                numberOfTurns: Int = 12
                                ) extends GameSettings
-
-case class StandardPalette(colourNames: Vector[String] =
-                           Vector("Blue", "Swedish Blond",
-                             "Orange", "Purple", "Red",
-                             "Yellow", "Swedish red")) extends Palette {
-  super.addColours(colourNames)
-}
 
 trait Palette {
 
-  var colMap = scala.collection.mutable.Map[Char, Colour]()
+  var colourSet = scala.collection.immutable.Set[String]()
 
-  def addColours(colourNames: Vector[String]) = {
-    colourNames.foreach(name =>
-      addColour(Colour(name.capitalize)))
-  }
+  def getColourSet: scala.collection.immutable.Set[String] = colourSet
 
-  def colourSet: Set[Colour] = colMap.values.toSet
+  def colourCharSet: Set[Char] = colourSet.flatMap(_.headOption)
 
-  def colourMap = colMap
-
-  def charsInUse = colMap.keySet
-
-  def addColour(col: Colour): Boolean = {
-
-    if (colMap.keySet.contains(col.firstCharToUpper)) {
-      false
-    } else {
-      colMap += col.firstCharToUpper -> col
-      true
+  def addColour(colourStr: String)  = {
+    if (!colourCharSet.contains(colourStr.head toUpper)) {
+      colourSet = colourSet + colourStr
     }
   }
 }
 
-case class Colour(name: String) { def firstCharToUpper: Char = name.charAt(0).toUpper }
+case class StandardPalette(colourNames: Vector[String] =
+                           Vector("Blue", "Green", "Orange",
+                             "Purple", "Red", "Yellow")) extends Palette {
+  colourNames.foreach(name =>
+    addColour(name.capitalize))
+}
+
 

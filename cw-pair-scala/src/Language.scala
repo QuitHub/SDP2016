@@ -5,32 +5,30 @@
   */
 trait Language {
 
-  def nextGuessStr: String
-
-  def wellDoneStr: String
-
-  def failStr: String
-
-  def quitStr: String
-
-  def introString: String
-
-}
-
-case class EnglishLanguage(gs: GameSettings = StandardGameSettings(),
-                           palette: Palette = StandardPalette()) extends Language {
-
-  override def nextGuessStr: String = {
+  def nextGuessStr: String = {
     """What is your next guess?
 Type in the characters for your guess and press enter.
 Enter guess: """
   }
 
-  override def wellDoneStr: String = "You solved the puzzle! Good Job!\n"
+  def wellDoneStr = "You solved the puzzle! Good Job!\n"
 
-  override def quitStr: String = "Enter Y for another game or anything else to quit: "
+  def failStr = "You did not solve the puzzle too bad.\n"
 
-  override def failStr: String = "You did not solve the puzzle too bad.\n"
+  def quitStr = "Enter Y for another game or anything else to quit: "
+
+  def introString: String
+
+  def perfectMatchStr = "Black"
+
+  def partialMatchStr = "White"
+
+  def noMatchString = "No pegs"
+
+}
+
+case class EnglishLanguage(gs: GameSettings = StandardGameSettings(),
+                           palette: Palette = StandardPalette()) extends Language {
 
 
   override def introString: String = {
@@ -44,8 +42,8 @@ A color may appear more than once in the code.
 
 You try to guess what colored pegs are in the code and what order they are in.
 After making a guess the result will be displayed.
-A result consists of a ${gs.perfectMatchStr} peg for each peg you have exactly correct (color and position) in your guess.
-For each peg in the guess that is the correct color, but is out of position, you get a ${gs.partialMatchStr} peg.
+A result consists of a $perfectMatchStr peg for each peg you have exactly correct (color and position) in your guess.
+For each peg in the guess that is the correct color, but is out of position, you get a $partialMatchStr peg.
 
 Only the first letter of the color is displayed. $getExamples and so forth.
 When entering guesses you only need to enter the first character of the color.
@@ -60,14 +58,14 @@ Generating secret code ....
   def listColours: String = {
     val sb = StringBuilder.newBuilder
     palette.colourSet.
-      takeWhile(col => col != palette.colourSet.last).foreach(c => sb append s"${c.name}, ")
-      sb append  s"or ${palette.colourSet.last.name}."
+      takeWhile(col => col != palette.colourSet.last).foreach(c => sb append s"$c, ")
+      sb append  s"or ${palette.colourSet.last}."
      sb.toString()
   }
 
   def getExamples: String = {
-    val firstEl = palette.colourMap.head
-    val secondEl = palette.colourMap.tail.head
-    s"${firstEl._1} for ${firstEl._2.name}, ${secondEl._1} for ${secondEl._2.name},"
+    val firstEl = palette.getColourSet.head
+    val secondEl = palette.getColourSet.tail.head
+    s"${firstEl.head} for $firstEl, ${secondEl.head} for $secondEl,"
   }
 }

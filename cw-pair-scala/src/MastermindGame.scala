@@ -40,7 +40,7 @@ case class MastermindGame(sir: InputReceiver = StandardInputReceiver,
 
   @tailrec
   private def keepGuessing(b: Board): Board = {
-    val guess = Guess(validGuessString)
+    val guess = validGuessString
     val updatedBoard = b.updateBoard(guess)
     sor.render(updatedBoard.toString)
     if (updatedBoard.thereAreGuessesLeft && !updatedBoard.theCodeIsCracked) {
