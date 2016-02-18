@@ -1,4 +1,5 @@
 import scala.annotation.tailrec
+import StringUtils._
 
 /**
   * 11/02/2016.
@@ -9,7 +10,8 @@ case class MastermindGame(sir: InputReceiver = StandardInputReceiver,
                           sor: OutputRenderer = StandardOutputRenderer,
                           iv : InputValidator = StandardInputValidator(),
                           eLang: Language = EnglishLanguage(),
-                          board: Board
+                          board: Board,
+                          gameState: GameState
                          ) {
 
   def runGames(): Unit = {
@@ -20,8 +22,8 @@ case class MastermindGame(sir: InputReceiver = StandardInputReceiver,
   @tailrec
   private def playGame(): Unit = {
     sor.render(board.toString())
-    val boardAfterGameOver = keepGuessing(board)
-    gameOverOutput(boardAfterGameOver)
+    val gameStateAfterGameOver = keepGuessing(gameState, board)
+    gameOverOutput(gameStateAfterGameOver)
     if (wannaPlayAgain) playGame()
   }
 
@@ -36,23 +38,22 @@ case class MastermindGame(sir: InputReceiver = StandardInputReceiver,
       validGuessString // if not valid recursively seek valid one
   }
 
-
-
   @tailrec
-  private def keepGuessing(b: Board): Board = {
+  private def keepGuessing(gameState: GameState, board: Board): GameState = {
     val guess = validGuessString
-    val updatedBoard = b.updateBoard(guess)
+    val updatedGameState = GameState(board.numberOfGuessesLeft, gameState.isCompleteMatch(board, guess))
+    val updatedBoard = updatedGameState.updateBoard(guess, board)
     sor.render(updatedBoard.toString)
-    if (updatedBoard.thereAreGuessesLeft && !updatedBoard.theCodeIsCracked) {
-      sor.render(updatedBoard.guessesLeftToString + "\n")
-      keepGuessing(updatedBoard)
+    if (updatedGameState.thereAreGuessesLeft && !updatedGameState.isCodeCracked) {
+      sor.render(updatedGameState.guessesLeftToString + "\n")
+      keepGuessing(updatedGameState, updatedBoard)
     } else {
-      updatedBoard
+      updatedGameState
     }
   }
 
-  private def gameOverOutput(b: Board) = {
-    if (b.theCodeIsCracked)
+  private def gameOverOutput(gameState: GameState) = {
+    if (gameState.isCodeCracked)
       sor.render(eLang.wellDoneStr)
     else
       sor.render(eLang.failStr)
@@ -62,4 +63,28 @@ case class MastermindGame(sir: InputReceiver = StandardInputReceiver,
     sor.render(eLang.quitStr)
     sir.getInputAsUpper == "Y"
   }
+}
+
+case class GameState(guessesLeft: Int, isCodeCracked: Boolean = false){
+
+  def guessesLeftToString = s"You have $guessesLeft guesses left."
+
+  def updateBoard(guess: String, board: Board): Board = {
+    val result = guess.matchOutputString(board.secretCode)
+    Board(
+      guessesLeft(isCompleteMatch(board, guess)),
+      board.showCode,
+      board.secretCode,
+      board.results :+ result
+    )
+  }
+
+  def isCompleteMatch(board: Board, guess: String) = guess.countPerfectMatches(board.secretCode) == board.codeLength
+
+  private def guessesLeft(isCompleteMatch: Boolean): Int = {
+    if (isCompleteMatch) 0
+    else guessesLeft - 1
+  }
+
+  def thereAreGuessesLeft = guessesLeft > 0
 }

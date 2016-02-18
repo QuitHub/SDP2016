@@ -21,25 +21,17 @@ object StringUtils {
       val setB = zippedAndFiltered._2.toSet[Char]
       setA.intersect(setB).size
     }
-    def calculateResult(other: String): Result = Result(str, countPerfectMatches(other), countPartialMatches(other))
 
-    def visibleString(visible : Boolean): String ={
-        if(visible){
-          str
-        } else {
-          "." * str.length
-        }
+    def matchOutputString(other: String, lang: Language = EnglishLanguage()): String = {
+      val fullMatches = countPerfectMatches(other)
+      val partialMatches = countPartialMatches(other)
+      if(fullMatches + partialMatches == 0){
+        str + " " + lang.noMatchString
+      } else {
+        str + " " + s"${lang.perfectMatchStr} " * fullMatches + s"${lang.partialMatchStr} " * partialMatches
+      }
     }
-  }
-}
 
 
-case class Result(guess: String, fullMatches: Int, partialMatches: Int, lang: Language = EnglishLanguage()) {
-  override def toString: String = {
-    if(fullMatches + partialMatches == 0){
-      guess + " " + lang.noMatchString
-    } else {
-      guess + " " + s"${lang.perfectMatchStr} " * fullMatches + s"${lang.partialMatchStr} " * partialMatches
-    }
   }
 }
