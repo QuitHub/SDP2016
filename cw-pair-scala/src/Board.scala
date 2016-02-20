@@ -7,14 +7,24 @@ import StringUtils._
   * @author lukematthews
   */
 
+/**
+  * Models the board and provides a toString method
+  * @param numberOfGuessesLeft how many guesses empty rows the board has
+  * @param showCode whether the toString method should reveal the code
+  * @param codeLength how many pegs make up one code
+  * @param secretCode the code the player needs to guess
+  * @param results the previous guesses and the associated results
+  */
 case class Board(val numberOfGuessesLeft: Int,
                  val showCode: Boolean,
                  val codeLength: Int,
-                 val palette: Palette,
+                 val secretCode: String,
                  val results: Vector[String] = Vector[String]()) {
 
-  val secretCode = StringUtils.randomStringFromCharSet(codeLength, palette.colourCharSet)
-
+  /**
+    * a string representation of the board
+    * @return a string representation of the board
+    */
   override def toString: String = {
     val sb = StringBuilder.newBuilder
     sb.append("\n" + visibleString(showCode) + " Secret Code ")
@@ -35,6 +45,4 @@ case class Board(val numberOfGuessesLeft: Int,
      else
       rowToString
   }
-
-  def foo = (x: Int) => x * x
 }

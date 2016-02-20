@@ -77,7 +77,7 @@ case class GameState(guessesLeft: Int, isCodeCracked: Boolean = false) {
       guessesLeft(isCompleteMatch(board, guess)),
       board.showCode,
       board.codeLength,
-      board.palette,
+      board.secretCode,
       board.results :+ result
     )
   }

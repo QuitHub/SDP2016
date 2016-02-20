@@ -17,10 +17,12 @@ object StringUtils {
 
     def countPartialMatches(other: String): Int = {
       val zippedAndFiltered = (str, other).zipped.filter(_ != _)
-      val setA = zippedAndFiltered._1.toSet[Char]
-      val setB = zippedAndFiltered._2.toSet[Char]
-      setA.intersect(setB).size
+      val filteredStr = zippedAndFiltered._1
+      var filteredOther = zippedAndFiltered._2
+      filteredStr.toStream.foreach(c => filteredOther = filteredOther diff c.toString)
+      filteredStr.length - filteredOther.length
     }
+
 
     def matchOutputString(other: String, lang: Language = EnglishLanguage()): String = {
       val fullMatches = countPerfectMatches(other)

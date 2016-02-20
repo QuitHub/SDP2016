@@ -2,17 +2,26 @@ object MastermindDriver {
   def main(args: Array[String]) {
     val gs = StandardGameSettings()
     val palette = StandardPalette()
-    val b = Board(
+    val code = "RBRB"//StringUtils.randomStringFromCharSet(gs.codeLength, palette.colourCharSet)
+    val board =  Board(
       gs.numberOfTurns,
       true,
       gs.codeLength,
-      StandardPalette()
+      secretCode = code
     )
     val gameState = GameState(gs.numberOfTurns)
+    val newCode = StringUtils.randomStringFromCharSet(gs.codeLength, palette.colourCharSet)
+    val newBoard =  Board(
+      gs.numberOfTurns,
+      false,
+      gs.codeLength,
+      secretCode = newCode
+    )
 
-    val g = MastermindGame(board = b, gameState = gameState)
+    val g2 = MastermindGame(gameState = gameState, board = board)
+    g2.runGames()
+    val g = MastermindGame(gameState = gameState, board = newBoard)
     g.runGames
-
   }
 }
 
