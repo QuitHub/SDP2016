@@ -13,16 +13,15 @@ object StringUtils {
 
   implicit class StringImprovements(val str: String) {
 
-    def countPerfectMatches(other: String): Int = (str, other).zipped.filter(_ == _)._1.size
+    def countPerfectMatches(other: String): Int = (str, other).zipped.filter(_ == _)._1.length
 
     def countPartialMatches(other: String): Int = {
-      val zippedAndFiltered = (str, other).zipped.filter(_ != _)
-      val filteredStr = zippedAndFiltered._1
-      var filteredOther = zippedAndFiltered._2
-      filteredStr.toStream.foreach(c => filteredOther = filteredOther diff c.toString)
-      filteredStr.length - filteredOther.length
+      val zippedPerfectMatchesRemoved = (str, other).zipped.filter(_ != _)
+      val filteredStr = zippedPerfectMatchesRemoved._1
+      val filteredOther = zippedPerfectMatchesRemoved._2
+      val noMatches = filteredStr.foldLeft(filteredOther)((deccumulator, char) => deccumulator diff char.toString)
+      filteredStr.length - noMatches.length
     }
-
 
     def matchOutputString(other: String, lang: Language = EnglishLanguage()): String = {
       val fullMatches = countPerfectMatches(other)
@@ -33,7 +32,5 @@ object StringUtils {
         str + " " + s"${lang.perfectMatchStr} " * fullMatches + s"${lang.partialMatchStr} " * partialMatches
       }
     }
-
-
   }
 }
