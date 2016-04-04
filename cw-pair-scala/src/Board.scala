@@ -9,15 +9,12 @@ import StringUtils._
 
 /**
   * Models the board and provides a toString method
-  * @param numberOfGuessesLeft how many guesses empty rows the board has
   * @param showCode whether the toString method should reveal the code
-  * @param codeLength how many pegs make up one code
   * @param secretCode the code the player needs to guess
   * @param results the previous guesses and the associated results
   */
-case class Board(val numberOfGuessesLeft: Int,
-                 val showCode: Boolean,
-                 val codeLength: Int,
+case class Board(val showCode: Boolean,
+                 val gameSettings: GameSettings,
                  val secretCode: String,
                  val results: Vector[String] = Vector[String]()) {
 
@@ -35,9 +32,9 @@ case class Board(val numberOfGuessesLeft: Int,
     sb.toString()
   }
 
-  private def rowToString = "." * codeLength
+  private def rowToString = "." * gameSettings.codeLength
 
-  private def emptyHoles = "\n" + (rowToString + "\n") * numberOfGuessesLeft + "\n"
+  private def emptyHoles = "\n" + (rowToString + "\n") * gameSettings.numberOfTurns + "\n"
 
   private def visibleString(visible : Boolean): String ={
     if(visible)

@@ -6,24 +6,41 @@
 
 trait Palette {
 
-  var colourSet = scala.collection.immutable.Set[String]()
+  var colourSet = scala.collection.immutable.Set[Colour]()
 
-  def getColourSet: scala.collection.immutable.Set[String] = colourSet
+  def getColourSet: scala.collection.immutable.Set[Colour] = colourSet
 
-  def colourCharSet: Set[Char] = colourSet.flatMap(_.headOption)
+  def colourCharSet: Set[Char] = colourSet.flatMap(_.toString().headOption)
 
-  def addColour(colourStr: String)  = {
-    if (!colourCharSet.contains(colourStr.head toUpper)) {
-      colourSet = colourSet + colourStr
+  def addColour(colour: Colour)  = {
+    if (!colourCharSet.contains(colour.toString.head toUpper)) {
+      colourSet = colourSet + colour
     }
   }
+
+
 }
 
-case class StandardPalette(colourNames: Vector[String] =
-                           Vector("Blue", "Green", "Orange",
-                             "Purple", "Red", "Yellow")) extends Palette {
-  colourNames.foreach(name =>
-    addColour(name.capitalize))
+case class StandardPalette() extends Palette {
+
+
+  val colourNames: Vector[Colour] =
+  Vector(Red, Blue, Orange, Green, Purple, Yellow)
+
+  colourNames.foreach(name => {
+    addColour(name: Colour)
+  })
+
 }
+
+sealed trait Colour
+
+case object Red extends Colour
+case object Blue extends Colour
+case object Orange extends Colour
+case object Green extends Colour
+case object Yellow extends Colour
+case object Purple extends Colour
+
 
 

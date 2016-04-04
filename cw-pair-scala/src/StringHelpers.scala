@@ -19,8 +19,7 @@ object StringUtils {
       val zippedPerfectMatchesRemoved = (str, other).zipped.filter(_ != _)
       val filteredStr = zippedPerfectMatchesRemoved._1
       val filteredOther = zippedPerfectMatchesRemoved._2
-      val noMatches = filteredStr.foldLeft(filteredOther)((deccumulator, char) => deccumulator diff char.toString)
-      filteredStr.length - noMatches.length
+      filteredStr.intersect(filteredOther).length
     }
 
     def matchOutputString(other: String, lang: Language = EnglishLanguage()): String = {

@@ -12,8 +12,7 @@ case class MastermindGame(sir: InputReceiver = StandardInputReceiver,
                           iv: InputValidator = StandardInputValidator(),
                           eLang: Language = EnglishLanguage(),
                           gameState: GameState,
-                          board: Board
-                         ) {
+                          board: Board) {
 
   def runGames(): Unit = {
     sor.render(eLang.introString)
@@ -29,7 +28,6 @@ case class MastermindGame(sir: InputReceiver = StandardInputReceiver,
     if (wannaPlayAgain) playGame()
   }
 
-
   @tailrec
   private def validGuessString: String = {
     sor.render(eLang.nextGuessStr)
@@ -37,13 +35,13 @@ case class MastermindGame(sir: InputReceiver = StandardInputReceiver,
     if (iv.validateGuess(str))
       str
     else
-      validGuessString // not valid so recursively seek valid one
+      validGuessString  // not valid so recursively seek valid one
   }
 
   @tailrec
   private def loopUntilGameOver(gameState: GameState, board: Board): GameState = {
     val guess = validGuessString
-    val updatedGameState = GameState(board.numberOfGuessesLeft, gameState.isCompleteMatch(board, guess))
+    val updatedGameState = GameState(board.gameSettings.numberOfTurns, gameState.isCompleteMatch(board, guess))
     val updatedBoard = updatedGameState.updateBoard(guess, board)
     sor.render(updatedBoard.toString)
     if (updatedGameState.thereAreGuessesLeft && !updatedGameState.isCodeCracked) {
@@ -74,15 +72,14 @@ case class GameState(guessesLeft: Int, isCodeCracked: Boolean = false) {
   def updateBoard(guess: String, board: Board): Board = {
     val result = guess.matchOutputString(board.secretCode)
     Board(
-      guessesLeft(isCompleteMatch(board, guess)),
       board.showCode,
-      board.codeLength,
+      StandardGameSettings(board.gameSettings.codeLength, guessesLeft(isCompleteMatch(board, guess))),
       board.secretCode,
       board.results :+ result
     )
   }
 
-  def isCompleteMatch(board: Board, guess: String) = guess.countPerfectMatches(board.secretCode) == board.codeLength
+  def isCompleteMatch(board: Board, guess: String) = guess.countPerfectMatches(board.secretCode) == board.gameSettings.codeLength
 
   private def guessesLeft(isCompleteMatch: Boolean): Int = {
     if (isCompleteMatch) 0

@@ -66,6 +66,6 @@ Generating secret code ....
   def getExamples: String = {
     val firstEl = palette.getColourSet.head
     val secondEl = palette.getColourSet.tail.head
-    s"${firstEl.head} for $firstEl, ${secondEl.head} for $secondEl,"
+    s"${firstEl.toString.head} for $firstEl, ${secondEl.toString.head} for $secondEl,"
   }
 }
