@@ -16,7 +16,7 @@ import StringUtils._
 case class Board(val showCode: Boolean,
                  val gameSettings: GameSettings,
                  val secretCode: String,
-                 val results: Vector[String] = Vector[String]()) {
+                 val results: Results) {
 
   /**
     * a string representation of the board
@@ -25,10 +25,10 @@ case class Board(val showCode: Boolean,
   override def toString: String = {
     val sb = StringBuilder.newBuilder
     sb.append("\n" + visibleString(showCode) + " Secret Code ")
-    if (results.nonEmpty) {
+    if (results.vec.nonEmpty) {
       sb.append("\n")
     }
-    sb.append(results.mkString("", "\n", "") + emptyHoles)
+    sb.append(results.vec.mkString("", "\n", "") + emptyHoles)
     sb.toString()
   }
 

@@ -7,7 +7,7 @@ trait OutputRenderer {
   def render(s: String)
 }
 
-object StandardOutputRenderer extends OutputRenderer {
+case class StandardOutputRenderer() extends OutputRenderer {
   override def render(s: String): Unit = {
     print(s)
   }

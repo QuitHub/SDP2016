@@ -3,9 +3,13 @@
   *
   * @author lukematthews
   */
-trait Language {
+ trait Language {
 
-  def introString: String
+  val gs: GameSettings = GameSettings()
+
+  val palette: Palette = StandardPalette()
+
+  def introString: String = ""
 
   def nextGuessStr = {
     """What is your next guess?
@@ -28,8 +32,7 @@ Enter guess: """
   def playAgainStr = "Y"
 }
 
-case class EnglishLanguage(gs: GameSettings = StandardGameSettings(),
-                           palette: Palette = StandardPalette()) extends Language {
+case class EnglishLanguage() extends Language {
 
   override def introString: String = {
     s"""Welcome to Mastermind.

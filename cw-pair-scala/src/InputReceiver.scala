@@ -10,7 +10,7 @@ trait InputReceiver {
 
 }
 
-object StandardInputReceiver extends InputReceiver {
+case class StandardInputReceiver() extends InputReceiver {
 
   override def getInputAsUpper = StdIn.readLine.toUpperCase
 

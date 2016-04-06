@@ -13,6 +13,8 @@ object StringUtils {
 
   implicit class StringImprovements(val str: String) {
 
+    val lang = EnglishLanguage()
+
     def countPerfectMatches(other: String): Int = (str, other).zipped.filter(_ == _)._1.length
 
     def countPartialMatches(other: String): Int = {
@@ -22,7 +24,7 @@ object StringUtils {
       filteredStr.intersect(filteredOther).length
     }
 
-    def matchOutputString(other: String, lang: Language = EnglishLanguage()): String = {
+    def matchOutputString(other: String): String = {
       val fullMatches = countPerfectMatches(other)
       val partialMatches = countPartialMatches(other)
       if(fullMatches + partialMatches == 0){

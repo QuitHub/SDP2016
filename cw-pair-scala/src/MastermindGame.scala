@@ -7,10 +7,10 @@ import scala.annotation.tailrec
   *
   * @author lukematthews
   */
-case class MastermindGame(sir: InputReceiver = StandardInputReceiver,
-                          sor: OutputRenderer = StandardOutputRenderer,
-                          iv: InputValidator = StandardInputValidator(),
-                          eLang: Language = EnglishLanguage(),
+case class MastermindGame(sir: InputReceiver,
+                          sor: OutputRenderer,
+                          iv: InputValidator,
+                          eLang: Language,
                           gameState: GameState,
                           board: Board) {
 
@@ -41,11 +41,11 @@ case class MastermindGame(sir: InputReceiver = StandardInputReceiver,
   @tailrec
   private def loopUntilGameOver(gameState: GameState, board: Board): GameState = {
     val guess = validGuessString
-    val updatedGameState = GameState(board.gameSettings.numberOfTurns, gameState.isCompleteMatch(board, guess))
+    val updatedGameState = GameState(GuessesLeft(GameSettings()), gameState.isCompleteMatch(board, guess))
     val updatedBoard = updatedGameState.updateBoard(guess, board)
     sor.render(updatedBoard.toString)
     if (updatedGameState.thereAreGuessesLeft && !updatedGameState.isCodeCracked) {
-      sor.render(updatedGameState.guessesLeftToString + "\n")
+      sor.render(updatedGameState.guessesLeft.toString + "\n")
       loopUntilGameOver(updatedGameState, updatedBoard)
     } else {
       updatedGameState
@@ -65,7 +65,7 @@ case class MastermindGame(sir: InputReceiver = StandardInputReceiver,
   }
 }
 
-case class GameState(guessesLeft: Int, isCodeCracked: Boolean = false) {
+case class GameState(guessesLeft: GuessesLeft, isCodeCracked: Boolean = false) {
 
   def guessesLeftToString = s"You have $guessesLeft guesses left."
 
@@ -73,9 +73,9 @@ case class GameState(guessesLeft: Int, isCodeCracked: Boolean = false) {
     val result = guess.matchOutputString(board.secretCode)
     Board(
       board.showCode,
-      StandardGameSettings(board.gameSettings.codeLength, guessesLeft(isCompleteMatch(board, guess))),
+      GameSettings(),
       board.secretCode,
-      board.results :+ result
+      Results(board.results.vec :+ result)
     )
   }
 
@@ -83,8 +83,15 @@ case class GameState(guessesLeft: Int, isCodeCracked: Boolean = false) {
 
   private def guessesLeft(isCompleteMatch: Boolean): Int = {
     if (isCompleteMatch) 0
-    else guessesLeft - 1
+    else guessesLeft.number - 1
   }
 
-  def thereAreGuessesLeft = guessesLeft > 0
+  def thereAreGuessesLeft = guessesLeft.number > 0
+}
+
+case class GuessesLeft(gs: GameSettings){
+  val number = gs.numberOfTurns
+  override def toString = {
+    s"You have $number guesses left."
+  }
 }
